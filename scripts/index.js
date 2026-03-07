@@ -8,7 +8,19 @@ const loadLevelWord = id => {
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
     fetch(url)
      .then(res => res.json())
-     .then(data => displayLevelWords(data.data));
+     .then(data => {
+        removeActive();
+        const clickBtn = document.getElementById(`lesson-btn-${id}`);
+        clickBtn.classList.add('active');
+        displayLevelWords(data.data);
+     });
+}
+
+const removeActive = () => {
+    const allBtns = document.querySelectorAll('.lesson-btn');
+    allBtns.forEach(btn => {
+        btn.classList.remove("active");
+    })
 }
 
 const displayLevelWords = words => {
@@ -34,7 +46,7 @@ const displayLevelWords = words => {
 
                 <div class="text-xl font-semibold font-hindSiliguri">"${word.meaning} / ${word.pronunciation}"</div>
                 <div class="flex justify-between mt-12">
-                    <button class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-circle-info text-[#374957]"></i></button>
+                    <button onclick="my_modal_5.showModal()" class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-circle-info text-[#374957]"></i></button>
                     <button class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-volume-high text-[#374957]"></i></button>
                 </div>
             </div>
@@ -51,7 +63,7 @@ const displayLessons = lessons => {
     lessons.forEach(lesson => {
         const btndiv = document.createElement('div');
         btndiv.innerHTML = `
-            <button onclick="loadLevelWord(${lesson.level_no})" class="btn btn-outline btn-primary"><i class="fa-solid fa-book-open"></i></i> Lesson - ${lesson.level_no}
+            <button id="lesson-btn-${lesson.level_no}" onclick="loadLevelWord(${lesson.level_no})" class="btn btn-outline btn-primary lesson-btn"><i class="fa-solid fa-book-open"></i></i> Lesson - ${lesson.level_no}
             </button>
         `;
         levelsContainer.appendChild(btndiv);
