@@ -1,17 +1,25 @@
-const createElements = arr => {
-  const htmlElements = arr.map(el =>`<div class="badge badge-xl bg-[#D7E4EF] text-sm">${el}</div>`);
+const createElements = (arr) => {
+  const htmlElements = arr.map(
+    (el) => `<div class="badge badge-xl bg-[#D7E4EF] text-sm">${el}</div>`,
+  );
   return htmlElements.join(" ");
+};
+
+const pronounceWord = (word) =>{
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-EN"; // English
+  window.speechSynthesis.speak(utterance);
 }
 
-const manageSpinner = status => {
-  if(status) {
-    document.getElementById('spinner').classList.remove('hidden');
-    document.getElementById('words-container').classList.add('hidden');
+const manageSpinner = (status) => {
+  if (status) {
+    document.getElementById("spinner").classList.remove("hidden");
+    document.getElementById("words-container").classList.add("hidden");
   } else {
-    document.getElementById('spinner').classList.add('hidden');
-    document.getElementById('words-container').classList.remove('hidden');
+    document.getElementById("spinner").classList.add("hidden");
+    document.getElementById("words-container").classList.remove("hidden");
   }
-}
+};
 
 const loadLessons = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
@@ -90,7 +98,7 @@ const displayLevelWords = (words) => {
                 <div class="text-xl font-semibold font-hindSiliguri">"${word.meaning} / ${word.pronunciation}"</div>
                 <div class="flex justify-between mt-12">
                     <button onclick="loadWordDetails(${word.id})" class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-circle-info text-[#374957]"></i></button>
-                    <button class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-volume-high text-[#374957]"></i></button>
+                    <button onclick="pronounceWord('${word.word}')" class="btn bg-[#1A91FF]/10 hover:bg-[#1A91FF] border-none"><i class="fa-solid fa-volume-high text-[#374957]"></i></button>
                 </div>
             </div>
         `;
@@ -115,3 +123,19 @@ const displayLessons = (lessons) => {
 };
 
 loadLessons();
+
+document.getElementById("btn-search").addEventListener("click", () => {
+  const inputField = document.getElementById("search-input");
+  const inputValue = inputField.value.trim().toLowerCase();
+  // console.log(inputValue);
+  fetch("https://openapi.programming-hero.com/api/words/all")
+    .then((response) => response.json())
+    .then((data) => {
+      const allData = data.data;
+      // console.log(allData);
+      const filterWords = allData.filter(word => word.word.toLowerCase().includes(inputValue));
+      displayLevelWords(filterWords);
+      removeActive();
+    });
+  inputField.value = "";
+});
