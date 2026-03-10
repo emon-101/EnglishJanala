@@ -1,3 +1,18 @@
+const createElements = arr => {
+  const htmlElements = arr.map(el =>`<div class="badge badge-xl bg-[#D7E4EF] text-sm">${el}</div>`);
+  return htmlElements.join(" ");
+}
+
+const manageSpinner = status => {
+  if(status) {
+    document.getElementById('spinner').classList.remove('hidden');
+    document.getElementById('words-container').classList.add('hidden');
+  } else {
+    document.getElementById('spinner').classList.add('hidden');
+    document.getElementById('words-container').classList.remove('hidden');
+  }
+}
+
 const loadLessons = () => {
   fetch("https://openapi.programming-hero.com/api/levels/all")
     .then((response) => response.json())
@@ -5,6 +20,7 @@ const loadLessons = () => {
 };
 
 const loadLevelWord = (id) => {
+  manageSpinner(true);
   const url = `https://openapi.programming-hero.com/api/level/${id}`;
   fetch(url)
     .then((res) => res.json())
@@ -36,9 +52,7 @@ const displayDetails = (word) => {
             <br>
             <h3 class="font-hindSiliguri font-semibold">সমার্থক শব্দ গুলো</h3>
             <div class="flex gap-2 flex-wrap mt-3">
-              <div class="badge badge-xl bg-[#D7E4EF] text-sm">${word.synonyms[0]}</div>
-              <div class="badge badge-xl bg-[#D7E4EF] text-sm">${word.synonyms[1]}</div>
-              <div class="badge badge-xl bg-[#D7E4EF] text-sm">${word.synonyms[2]}</div>
+              <div class="">${createElements(word.synonyms)}</div>
             </div>
         </div>
     `;
@@ -83,6 +97,7 @@ const displayLevelWords = (words) => {
 
     wordsContainer.appendChild(card);
   });
+  manageSpinner(false);
 };
 
 const displayLessons = (lessons) => {
